@@ -35,3 +35,6 @@ func main() {
 	}
 	http.Serve(l, nil)
 }
+
+// NOTE: no response from rpc server? check here
+// https://stackoverflow.com/questions/17452199/no-response-from-gorilla-rpc-json-rpc-service

@@ -1,0 +1,11 @@
+curl -X POST http://localhost:9000/rpc \
+ -H 'cache-control: no-cache' \
+ -H 'content-type: application/json' \
+ -d '{
+    "method": "JsonServer.GetProfileDetail",
+    "params": [
+        {
+            "Id":"1",
+        }
+    ], "id":"1"
+}'
