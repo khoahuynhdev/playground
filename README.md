@@ -11,3 +11,7 @@ go run server/main.go
 ```bash
 go run client/main.go
 ```
+
+### What can you do with RPC
+
+- build a LSP with [JSON-RPC](https://microsoft.github.io/language-server-protocol/overviews/lsp/overview/)
