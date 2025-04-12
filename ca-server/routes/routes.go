@@ -20,6 +20,7 @@ func SetupRoutes(r *gin.Engine, store models.Store) {
 
 	// Setup feature-specific routes
 	SetupUserRoutes(r, store)
+	SetupCertRoutes(r, store)
 }
 
 // HomeHandler returns welcome message
