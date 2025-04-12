@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/pem"
 	"fmt"
 
@@ -36,6 +37,7 @@ func (c *CertController) CreateKey(ctx *gin.Context) {
 	privatekeyDER := x509.MarshalPKCS1PrivateKey(privatekey)
 	privatekeyBlock := pem.Block{
 		Type: "RSA PRIVATE KEY",
+		// WARN: why doesn't openssl RSA understand the headers?
 		Headers: map[string]string{
 			"CA-SERVER": "localhost",
 		},
@@ -43,9 +45,10 @@ func (c *CertController) CreateKey(ctx *gin.Context) {
 	}
 
 	privakeyPEM := pem.EncodeToMemory(&privatekeyBlock)
+	base64PEM := base64.StdEncoding.EncodeToString(privakeyPEM)
 
 	fmt.Printf("Generated PEM successfully\n")
-	ctx.JSON(200, gin.H{"pem": string(privakeyPEM)})
+	ctx.JSON(200, gin.H{"pem": string(base64PEM), "base64_encoded": true})
 }
 
 func NewCertController() *CertController {
