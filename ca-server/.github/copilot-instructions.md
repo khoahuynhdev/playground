@@ -1,6 +1,6 @@
 <!-- Use this file to provide workspace-specific custom instructions to Copilot. For more details, visit https://code.visualstudio.com/docs/copilot/copilot-customization#_use-a-githubcopilotinstructionsmd-file -->
 
-# Gin HTTP Server Project
+# Cert Manager Server Project
 
 This is a Go HTTP server project using the Gin framework. It follows a clean architecture with controllers, models, middleware, routes, and configuration.
 
