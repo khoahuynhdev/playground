@@ -15,5 +15,6 @@ func SetupCertRoutes(router *gin.Engine, store models.Store) {
 	certGroup := router.Group("/api/certs")
 	{
 		certGroup.POST("", certController.CreateKey)
+		certGroup.POST("/ca", certController.CreateCA)
 	}
 }
