@@ -174,8 +174,8 @@ func (c *CertController) CreateServerCert(ctx *gin.Context) {
 	keyPEM := pem.EncodeToMemory(&pem.Block{Type: "PRIVATE KEY", Bytes: serverPrivDER})
 
 	ctx.JSON(200, gin.H{
-		"certPEM": string(certPEM),
-		"keyPEM":  string(keyPEM),
+		"certPEM": certPEM,
+		"keyPEM":  keyPEM,
 	})
 }
 
