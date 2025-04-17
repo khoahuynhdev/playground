@@ -11,7 +11,6 @@ import (
 	"encoding/base64"
 	"encoding/pem"
 	"fmt"
-	"net"
 	"os"
 	"time"
 
@@ -118,15 +117,15 @@ func (c *CertController) CreateServerCert(ctx *gin.Context) {
 	}
 
 	// Parse IP addresses if provided
-	var ips []net.IP
-	for _, ip := range req.IPAddresses {
-		parsedIP := net.ParseIP(ip)
-		if parsedIP == nil {
-			ctx.JSON(400, gin.H{"error": fmt.Sprintf("Invalid IP address: %s", ip)})
-			return
-		}
-		ips = append(ips, parsedIP)
-	}
+	// var ips []net.IP
+	// for _, ip := range req.IPAddresses {
+	// 	parsedIP := net.ParseIP(ip)
+	// 	if parsedIP == nil {
+	// 		ctx.JSON(400, gin.H{"error": fmt.Sprintf("Invalid IP address: %s", ip)})
+	// 		return
+	// 	}
+	// 	ips = append(ips, parsedIP)
+	// }
 
 	// Create certificate template
 	validDays := defaultValidDays
@@ -141,8 +140,7 @@ func (c *CertController) CreateServerCert(ctx *gin.Context) {
 		NotAfter:     time.Now().Add(time.Hour * 24 * time.Duration(validDays)),
 		KeyUsage:     x509.KeyUsageDigitalSignature | x509.KeyUsageKeyEncipherment,
 		ExtKeyUsage:  []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
-		DNSNames:     req.DNSNames,
-		IPAddresses:  ips,
+		DNSNames:     []string{"localhost"},
 	}
 
 	// Sign the certificate
