@@ -55,20 +55,19 @@ func (c *CertController) CreateCA(ctx *gin.Context) {
 	}
 	caCertDER, err := x509.CreateCertificate(rand.Reader, caTmpl, caTmpl, caPriv.Public(), caPriv)
 	if err != nil {
-	caPrivDER, err := x509.MarshalPKCS8PrivateKey(caPriv)
-	if err != nil {
-		ctx.JSON(500, gin.H{"error": "Failed to marshal CA private key"})
+		ctx.JSON(500, gin.H{"error": "Failed to marshal CA cert"})
 		return
 	}
+	caPrivDER, err := x509.MarshalPKCS8PrivateKey(caPriv)
 	if err != nil {
 		ctx.JSON(500, gin.H{"error": "Failed to marshal CA private key"})
 		return
 	}
 
 	// Encode the certificate to PEM format for easy storage and transfer
-		caCertPEM := pem.EncodeToMemory(&pem.Block{Bytes: caCertDER, Type: "CERTIFICATE"})
+	caCertPEM := pem.EncodeToMemory(&pem.Block{Bytes: caCertDER, Type: "CERTIFICATE"})
 	// Encode the private key to PEM format to ensure compatibility with other tools and systems
-		caPrivPEM := pem.EncodeToMemory(&pem.Block{Bytes: caPrivDER, Type: "EC Private Key"})
+	caPrivPEM := pem.EncodeToMemory(&pem.Block{Bytes: caPrivDER, Type: "EC Private Key"})
 	ctx.JSON(200, gin.H{
 		"certPEM": caCertPEM,
 		"keyPEM":  caPrivPEM,
