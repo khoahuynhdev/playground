@@ -139,7 +139,7 @@ func (c *CertController) CreateClientCert(ctx *gin.Context) {
 		NotBefore:    time.Now(),
 		NotAfter:     time.Now().Add(time.Hour * 24 * time.Duration(validDays)),
 		KeyUsage:     x509.KeyUsageDigitalSignature | x509.KeyUsageKeyEncipherment,
-		ExtKeyUsage:  []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth},
+		ExtKeyUsage:  []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth}, // NOTE: find same usage in openssl
 		DNSNames:     []string{"localhost"},
 	}
 
@@ -360,7 +360,7 @@ func (c *CertController) CreateCA(ctx *gin.Context) {
 	// Encode the certificate to PEM format for easy storage and transfer
 	caCertPEM := pem.EncodeToMemory(&pem.Block{Bytes: caCertDER, Type: "CERTIFICATE"})
 	// Encode the private key to PEM format to ensure compatibility with other tools and systems
-	caPrivPEM := pem.EncodeToMemory(&pem.Block{Bytes: caPrivDER, Type: "EC Private Key"})
+	caPrivPEM := pem.EncodeToMemory(&pem.Block{Bytes: caPrivDER, Type: "EC PRIVATE KEY"})
 	ctx.JSON(200, gin.H{
 		"certPEM": caCertPEM,
 		"keyPEM":  caPrivPEM,
