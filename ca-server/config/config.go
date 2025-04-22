@@ -30,11 +30,11 @@ func New() *Config {
 		Mode:           getEnv("GIN_MODE", "debug"),
 		LogLevel:       getEnv("LOG_LEVEL", "info"),
 		// TLS configuration with defaults
-		TLSEnabled:  getEnvAsBool("TLS_ENABLED", true),
+		TLSEnabled:  getEnvAsBool("TLS_ENABLED", false),
 		TLSCertPath: getEnv("TLS_CERT_PATH", "server/certs/cert.pem"),
 		TLSKeyPath:  getEnv("TLS_KEY_PATH", "server/certs/key.pem"),
 		// mTLS configuration
-		MTLSEnabled:      getEnvAsBool("MTLS_ENABLED", true),
+		MTLSEnabled:      getEnvAsBool("MTLS_ENABLED", false),
 		ClientCACertPath: getEnv("CLIENT_CA_CERT_PATH", "cert.pem"),
 	}
 }

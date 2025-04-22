@@ -36,10 +36,6 @@ func main() {
 			TLSClientConfig: &tls.Config{
 				RootCAs:      certPool,
 				Certificates: []tls.Certificate{clientCert},
-				VerifyPeerCertificate: func(rawCerts [][]byte, verifiedChains [][]*x509.Certificate) error {
-					// Custom verification logic can be added here
-					return nil
-				},
 			},
 		},
 	}

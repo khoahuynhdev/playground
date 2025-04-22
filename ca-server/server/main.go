@@ -31,16 +31,17 @@ func StartMTLS() *http.Server {
 		panic(err)
 	}
 
+	tlsConfig := tls.Config{
+		ClientCAs:    getCaCertPool(),
+		ClientAuth:   tls.RequireAndVerifyClientCert,
+		Certificates: []tls.Certificate{cert},
+	}
 	// Example mTLS with Gin https://www.bastionxp.com/blog/api-gateway-security-mtls-authentication/
 	server := &http.Server{
-		Addr: "localhost:8443",
-		TLSConfig: &tls.Config{
-			ClientCAs:    getCaCertPool(),
-			ClientAuth:   tls.RequireAndVerifyClientCert,
-			Certificates: []tls.Certificate{cert},
-		},
+		Addr:      "localhost:8443",
+		TLSConfig: &tlsConfig,
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("MTLS HTTPs server is working!")
+			fmt.Println("HTTPS with mTLS is working!")
 		}),
 	}
 
@@ -66,7 +67,7 @@ func StartTLS() *http.Server {
 			Certificates: []tls.Certificate{cert},
 		},
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("HTTPs server is working!")
+			fmt.Println("HTTPS with TLS is working!")
 		}),
 	}
 
