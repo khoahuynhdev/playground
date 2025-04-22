@@ -1,0 +1,8 @@
+curl -X POST "http://localhost:8080/api/certs/server?curve=P256" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "commonName": "server.example.com",
+  "dnsNames": ["server.example.com", "www.example.com"],
+  "ipAddresses": ["192.168.1.1", "10.0.0.1"],
+  "validDays": 365
+}'
