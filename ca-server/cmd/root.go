@@ -9,9 +9,9 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "ca-server",
-	Short: "CA Server is a CLI application to manage HTTP servers",
-	Long:  `CA Server is a command-line application that can start HTTP servers and execute various commands.`,
+	Use:   "xpki",
+	Short: "eXtensible PKI (xpki) is a CLI application to manage your pki",
+	Long:  `eXtensible PKI (xpki) is a command-line application CLI application to manage your pki`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
