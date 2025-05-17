@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"ca-server/cmd/cli"
 	"ca-server/cmd/server"
 	"fmt"
 
@@ -25,4 +26,5 @@ func Execute() error {
 func init() {
 	// add subcommands here
 	rootCmd.AddCommand(server.ServerCommand)
+	rootCmd.AddCommand(cli.SetupCommand)
 }
