@@ -1,5 +1,7 @@
 # A todo list for this project
 
+- [] setup PKI from cli
+
 ## Previous todo list
 
 - [x] Gen a private/public key pairs for a user
