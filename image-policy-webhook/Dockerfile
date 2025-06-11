@@ -13,11 +13,8 @@ RUN go build -ldflags="-s -w" -o image-policy-webhook main.go
 # Use a minimal base image for the final container
 FROM golang:1.24 AS final
 
-# Install necessary certificates
-RUN apk --no-cache add ca-certificates
-
 # Create and use a non-root user
-RUN adduser -D -g '' backend
+RUN useradd backend
 USER backend
 
 # Set the working directory
