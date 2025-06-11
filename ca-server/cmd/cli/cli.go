@@ -29,5 +29,5 @@ func runSetup(cmd *cobra.Command, args []string) {
 	keyDir := pkiPath + "/keys"
 	util.CreateDirectory(keyDir)
 
-	// Setup Root CA
+	// TODO: Setup Root CA
 }

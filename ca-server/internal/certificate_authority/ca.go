@@ -23,6 +23,8 @@ func CreateNewCA(certConfig CertificateConfiguration) ([]string, *x509.Certifica
 		rootSlug = slugger(caName) // we do not really need to sligify it, just need for directory path building
 	}
 
+	privKey := key.GetPrivateKey()
+
 	if checkInputError {
 		return checkErorrs, nil, fmt.Errorf("cert config error")
 	}
