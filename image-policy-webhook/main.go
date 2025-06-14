@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -98,21 +99,21 @@ func main() {
 		json.NewEncoder(w).Encode(resp)
 	})
 
-	// cert, err := tls.LoadX509KeyPair("server.crt", "server.key")
-	// if err != nil {
-	// 	log.Fatalf("Failed to load TLS cert/key: %v", err)
-	// }
-	server := &http.Server{
-		Addr:    ":8081",
-		Handler: nil,
-		// TLSConfig: &tls.Config{
-		// 	Certificates: []tls.Certificate{cert},
-		// },
+	cert, err := tls.LoadX509KeyPair("/etc/ssl/server.crt", "/etc/ssl/server.key")
+	if err != nil {
+		log.Fatalf("Failed to load TLS cert/key: %v", err)
 	}
-	// log.Println("Starting HTTPS webhook on :8443 ...")
-	log.Println("Starting HTTP webhook on :8081 ...")
-	// log.Fatal(server.ListenAndServeTLS("", ""))
-	log.Fatal(server.ListenAndServe())
+	server := &http.Server{
+		Addr:    ":8443",
+		Handler: nil,
+		TLSConfig: &tls.Config{
+			Certificates: []tls.Certificate{cert},
+		},
+	}
+	log.Println("Starting HTTPS webhook on :8443 ...")
+	// log.Println("Starting HTTP webhook on :8081 ...")
+	log.Fatal(server.ListenAndServeTLS("", ""))
+	// log.Fatal(server.ListenAndServe())
 }
 
 func isLatestTag(image string) bool {
