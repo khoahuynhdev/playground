@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: imagepolicywebhook
+  name: imagepolicywebhook
+  namespace: imagepolicywebhook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: imagepolicywebhook
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: imagepolicywebhook
+    spec:
+      volumes:
+      - name: tls-credential
+        secret:
+          secretName: webhook-credential
+          items:
+            - key: tls.crt
+              path: server.crt
+            - key: tls.key
+              path: server.key
+      containers:
+      - image: khoahd96/imagepolicywebhook:0.2.0
+        name: imagepolicywebhook
+        ports:
+        - containerPort: 8443
+        volumeMounts:
+        - name: tls-credential
+          readOnly: true
+          mountPath: /etc/ssl/
