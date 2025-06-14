@@ -9,6 +9,8 @@ import (
 	"net/http"
 )
 
+// WARNING: this is for education perpose, do not use in Prod env
+
 // AdmissionReview and related structs
 // Minimal types for decoding/encoding
 
