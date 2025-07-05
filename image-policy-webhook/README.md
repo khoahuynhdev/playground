@@ -12,3 +12,4 @@
 - Kubernetes (knowing how to use deployment, service, etc is enough)
 - Openssl
 - Go
+- openssl
