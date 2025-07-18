@@ -19,6 +19,7 @@ type Config struct {
 	// mTLS configuration
 	MTLSEnabled      bool
 	ClientCACertPath string
+	PKIPath          string
 }
 
 // New creates a new Config with values from environment
@@ -36,6 +37,7 @@ func New() *Config {
 		// mTLS configuration
 		MTLSEnabled:      getEnvAsBool("MTLS_ENABLED", false),
 		ClientCACertPath: getEnv("CLIENT_CA_CERT_PATH", "cert.pem"),
+		PKIPath:          getEnv("X_PKI_PATH", ".xpki"),
 	}
 }
 
