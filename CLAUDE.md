@@ -18,7 +18,7 @@ The repository contains multiple independent playground projects:
 - **terraform-vault-pki/** - Terraform configuration for HashiCorp Vault PKI secrets engine
 - **openbao/** - OpenBao (Vault fork) experimentation
 - **tls-playground/** - TLS and mTLS examples in Go
-- **libvirt-terraform/** - Provisioning VMs using Terraform with the libvirt provider
+- **libvirt-terraform/** - Provisioning VMs using Terraform with the libvirt provider with Fedora42
 
 Each project has its own README with specific setup instructions.
 
