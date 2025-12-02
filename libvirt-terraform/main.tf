@@ -4,7 +4,7 @@ terraform {
   required_providers {
     libvirt = {
       source  = "dmacvicar/libvirt"
-      version = "~> 0.9.0"
+      version = "~> 0.9.1"
     }
   }
 
@@ -29,9 +29,8 @@ resource "libvirt_pool" "vm_pool" {
 
 # Download base image
 resource "libvirt_volume" "base_image" {
-  name   = "${var.vm_name}-base.qcow2"
-  pool   = libvirt_pool.vm_pool.name
-  format = "qcow2"
+  name = "${var.vm_name}-base.qcow2"
+  pool = libvirt_pool.vm_pool.name
 
   create = {
     content = {
@@ -44,12 +43,18 @@ resource "libvirt_volume" "base_image" {
 resource "libvirt_volume" "vm_disk" {
   name     = "${var.vm_name}-disk.qcow2"
   pool     = libvirt_pool.vm_pool.name
-  format   = "qcow2"
   capacity = var.disk_size
+  target = {
+    format = {
+      type = "qcow2"
+    }
+  }
 
   backing_store = {
-    path   = libvirt_volume.base_image.path
-    format = "qcow2"
+    path = libvirt_volume.base_image.path
+    format = {
+      type = "qcow2"
+    }
   }
 }
 
@@ -104,21 +109,27 @@ resource "libvirt_volume" "cloudinit_volume" {
 
 # Define the VM domain
 resource "libvirt_domain" "vm" {
-  name   = var.vm_name
-  memory = var.memory
-  vcpu   = var.vcpu
-  unit   = "MiB"
-  type   = "kvm"
+  name        = var.vm_name
+  memory      = var.memory
+  vcpu        = var.vcpu
+  memory_unit = "MiB"
+  type        = "kvm"
 
   os = {
     type         = "hvm"
-    machine      = "q35"
+    type_machine = "q35"
     type_arch    = "x86_64"
-    boot_devices = ["hd"]
-    firmware     = "efi"
-    loader       = "/usr/share/edk2/x64/OVMF_CODE.secboot.4m.fd"
-    nvram = {
-      undefine_on_destroy = true
+    boot_devices = [{
+      dev = "hd"
+    }]
+    firmware        = "efi"
+    loader          = "/usr/share/edk2/ovmf/OVMF_CODE.fd"
+    loader_readonly = "yes"
+    loader_type     = "pflash"
+    loader_secure   = "no"
+    nv_ram = {
+      nv_ram   = "/var/lib/libvirt/qemu/nvram/${var.vm_name}.fd"
+      template = "/usr/share/edk2/ovmf/OVMF_VARS.fd"
     }
   }
 
@@ -128,7 +139,6 @@ resource "libvirt_domain" "vm" {
   # Enable ACPI for cloud images
   features = {
     acpi = true
-    apic = true
   }
 
 
@@ -137,34 +147,49 @@ resource "libvirt_domain" "vm" {
     disks = [
       {
         source = {
-          pool   = libvirt_pool.vm_pool.name
-          volume = libvirt_volume.vm_disk.name
+          volume = {
+            pool   = libvirt_pool.vm_pool.name
+            volume = libvirt_volume.vm_disk.name
+          }
         }
         target = {
           dev = "vda"
           bus = "virtio"
         }
+        driver = {
+          name = "qemu"
+          type = "qcow2"
+        }
       },
       {
         source = {
-          pool   = libvirt_volume.cloudinit_volume.pool
-          volume = libvirt_volume.cloudinit_volume.name
+          volume = {
+            pool   = libvirt_volume.cloudinit_volume.pool
+            volume = libvirt_volume.cloudinit_volume.name
+          }
         }
         target = {
           dev = "sda"
           bus = "sata"
         }
         device = "cdrom"
+        driver = {
+          name = "qemu"
+          type = "raw"
+        }
       }
     ]
 
     # Network interfaces
     interfaces = [
       {
-        type  = "network"
-        model = "virtio"
+        model = {
+          type = "virtio"
+        }
         source = {
-          network = var.network_name
+          network = {
+            network = var.network_name
+          }
         }
         # wait_for_ip = {
         #   source  = "lease"
@@ -183,11 +208,13 @@ resource "libvirt_domain" "vm" {
     ]
 
     # Graphics for virt-manager access
-    graphics = {
-      vnc = {
-        autoport = "yes"
-        listen   = "127.0.0.1"
+    graphics = [
+      {
+        vnc = {
+          auto_port = true
+          listen    = "127.0.0.1"
+        }
       }
-    }
+    ]
   }
 }
