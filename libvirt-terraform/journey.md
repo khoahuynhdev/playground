@@ -1,3 +1,7 @@
+### 2025-12-02 20:01
+
+- I successfully created VM from terraform script with latest provisioner v.0.9.1
+
 ### 2025-12-01 23:28
 
 - limitation, cannot destroy vm with nvram
