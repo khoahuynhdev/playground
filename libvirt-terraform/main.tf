@@ -67,6 +67,7 @@ data "template_file" "user_data" {
     fqdn     = "${var.vm_name}.${var.domain}"
     ssh_key  = var.ssh_public_key
     vm_user  = var.vm_user
+    vm_user_password_hashed = var.vm_user_password_hashed
   }
 }
 

@@ -69,3 +69,8 @@ variable "vm_user" {
   type        = string
   default     = "terraform"
 }
+variable "vm_user_password_hashed" {
+  description = "Default user password for the VM"
+  type        = string
+  default     = ""
+}
