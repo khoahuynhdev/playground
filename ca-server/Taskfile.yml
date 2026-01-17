@@ -1,0 +1,235 @@
+version: '3'
+
+vars:
+  APP_NAME: xpki
+  BINARY_NAME: xpki
+  BUILD_DIR: ./build
+  PKI_DIR: .xpki
+  CERTS_DIR: ./certs
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  # Build tasks
+  build:
+    desc: Build the application
+    cmds:
+      - go build -o {{.BUILD_DIR}}/{{.BINARY_NAME}} .
+    generates:
+      - "{{.BUILD_DIR}}/{{.BINARY_NAME}}"
+
+  build:debug:
+    desc: Build with debug symbols
+    cmds:
+      - go build -gcflags="all=-N -l" -o {{.BUILD_DIR}}/{{.BINARY_NAME}}-debug .
+    generates:
+      - "{{.BUILD_DIR}}/{{.BINARY_NAME}}-debug"
+
+  build:release:
+    desc: Build optimized release binary
+    cmds:
+      - go build -ldflags="-s -w" -o {{.BUILD_DIR}}/{{.BINARY_NAME}} .
+    generates:
+      - "{{.BUILD_DIR}}/{{.BINARY_NAME}}"
+
+  # Development tasks
+  dev:
+    desc: Run the application in development mode
+    cmds:
+      - go run main.go server
+    env:
+      GIN_MODE: debug
+      LOG_LEVEL: debug
+
+  dev:setup:
+    desc: Setup PKI directory structure
+    cmds:
+      - go run main.go setup
+
+  # Testing tasks
+  test:
+    desc: Run all tests
+    cmds:
+      - go test -v ./...
+
+  test:coverage:
+    desc: Run tests with coverage
+    cmds:
+      - go test -v -coverprofile=coverage.out ./...
+      - go tool cover -html=coverage.out -o coverage.html
+
+  test:race:
+    desc: Run tests with race detection
+    cmds:
+      - go test -race -v ./...
+
+  # Code quality tasks
+  lint:
+    desc: Run linters
+    cmds:
+      - go fmt ./...
+      - go vet ./...
+      - test -z "$(gofmt -l .)"
+
+  lint:fix:
+    desc: Fix linting issues
+    cmds:
+      - go fmt ./...
+      - go mod tidy
+
+  # Dependencies
+  deps:
+    desc: Download dependencies
+    cmds:
+      - go mod download
+
+  deps:update:
+    desc: Update dependencies
+    cmds:
+      - go get -u ./...
+      - go mod tidy
+
+  deps:verify:
+    desc: Verify dependencies
+    cmds:
+      - go mod verify
+
+  # Clean tasks
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - rm -rf {{.BUILD_DIR}}
+      - rm -f coverage.out coverage.html
+
+  clean:all:
+    desc: Clean everything including PKI and certs
+    cmds:
+      - task: clean
+      - rm -rf {{.PKI_DIR}}
+      - rm -rf {{.CERTS_DIR}}
+
+  # PKI tasks
+  pki:setup:
+    desc: Setup PKI directory structure
+    cmds:
+      - go run main.go setup
+
+  pki:clean:
+    desc: Clean PKI directory
+    cmds:
+      - rm -rf {{.PKI_DIR}}
+
+  # Certificate tasks
+  cert:ca:
+    desc: Generate CA certificate
+    cmds:
+      - curl -X POST http://localhost:8080/api/certs/ca
+
+  cert:server:
+    desc: Generate server certificate
+    cmds:
+      - curl -X POST http://localhost:8080/api/certs/server
+
+  cert:client:
+    desc: Generate client certificate
+    cmds:
+      - curl -X POST http://localhost:8080/api/certs/client
+
+  # Server tasks
+  server:
+    desc: Start the HTTP server
+    cmds:
+      - go run main.go server
+    env:
+      GIN_MODE: release
+
+  server:dev:
+    desc: Start server in development mode
+    cmds:
+      - go run main.go server
+    env:
+      GIN_MODE: debug
+      LOG_LEVEL: debug
+
+  server:tls:
+    desc: Start server with TLS enabled
+    cmds:
+      - go run main.go server
+    env:
+      TLS_ENABLED: true
+      TLS_CERT_PATH: "{{.CERTS_DIR}}/cert.pem"
+      TLS_KEY_PATH: "{{.CERTS_DIR}}/key.pem"
+
+  server:mtls:
+    desc: Start server with mTLS enabled
+    cmds:
+      - go run main.go server
+    env:
+      MTLS_ENABLED: true
+      TLS_CERT_PATH: "{{.CERTS_DIR}}/cert.pem"
+      TLS_KEY_PATH: "{{.CERTS_DIR}}/key.pem"
+      CLIENT_CA_CERT_PATH: "{{.CERTS_DIR}}/ca-cert.pem"
+
+  # Testing connectivity
+  test:http:
+    desc: Test HTTP server connectivity
+    cmds:
+      - curl -v http://localhost:8080/health
+
+  test:tls:
+    desc: Test TLS server connectivity
+    cmds:
+      - curl --cacert {{.CERTS_DIR}}/ca-cert.pem https://localhost:8080 -v
+
+  test:mtls:
+    desc: Test mTLS server connectivity
+    cmds:
+      - curl --cert {{.CERTS_DIR}}/cert.pem --key {{.CERTS_DIR}}/key.pem --cacert {{.CERTS_DIR}}/ca-cert.pem https://localhost:8443 -v
+
+  # Development workflow
+  workflow:dev:
+    desc: Complete development workflow
+    cmds:
+      - task: clean
+      - task: deps
+      - task: lint
+      - task: test
+      - task: build
+
+  workflow:setup:
+    desc: Initial project setup
+    cmds:
+      - task: deps
+      - task: pki:setup
+      - task: build
+
+  # Docker tasks (if needed)
+  docker:build:
+    desc: Build Docker image
+    cmds:
+      - docker build -t {{.APP_NAME}} .
+
+  docker:run:
+    desc: Run Docker container
+    cmds:
+      - docker run -p 8080:8080 {{.APP_NAME}}
+
+  # Install task
+  install:
+    desc: Install the binary to $GOPATH/bin
+    cmds:
+      - go install .
+
+  # Watch tasks (requires entr or similar)
+  watch:
+    desc: Watch for changes and rebuild
+    cmds:
+      - find . -name "*.go" | entr -r task build
+
+  watch:test:
+    desc: Watch for changes and run tests
+    cmds:
+      - find . -name "*.go" | entr -r task test

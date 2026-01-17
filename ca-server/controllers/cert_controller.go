@@ -29,7 +29,8 @@ func (c *CertController) ListCerts(ctx *gin.Context) {
 	// Logic to list certificates
 }
 
-func (c *CertController) SignCSR(ctx *gin.Context) {
+// CreateCSRFromCerts creates a certificate signing request (CSR) from existing certificates
+func (c *CertController) CreateCSRFromCerts(ctx *gin.Context) {
 }
 
 func (c *CertController) CreateClientCert(ctx *gin.Context) {

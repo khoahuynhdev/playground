@@ -82,17 +82,6 @@ The server will start on port 8080 by default.
 - `GET /health`: Health check endpoint
 - `GET /api/ping`: Ping endpoint
 
-## Todo
-
-- [x] Gen a private/public key pairs for a user
-
-  - [x] validate signature
-
-- [ ] Sign a CSR for new user
-- [x] Example calling http with tls
-- [x] Example calling http with mtls
-- [ ] Write tests for tls and mtls case
-
 ### Notes
 
 - quick way to generate CA certs from Go
