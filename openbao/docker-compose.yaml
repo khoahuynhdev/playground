@@ -1,0 +1,20 @@
+name: bao-dev
+services:
+  openbao:
+    image: quay.io/openbao/openbao:latest
+    container_name: openbao-dev
+    ports:
+      - "8200:8200"
+    environment:
+      - BAO_DEV_ROOT_TOKEN_ID=myroot # never use this on production
+      # - BAO_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+      - BAO_ADDR=0.0.0.0:8200 
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - openbao-data:/openbao/data
+      - ./config:/openbao/config
+    command: ["bao", "server", "-dev"]
+
+volumes:
+  openbao-data:
