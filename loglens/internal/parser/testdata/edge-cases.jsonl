@@ -1,0 +1,8 @@
+{"time":"not-a-timestamp","message":"invalid event time","_meta":{"name":"gateway","logLevelName":"INFO"}}
+{"message":"missing metadata and time"}
+{"time":"2026-10-14T09:00:03Z","message":"unexpected metadata shape","_meta":"unexpected"}
+{"time":"2026-10-14T09:00:04Z","message":42}
+{"time":"2026-10-14T09:00:05Z","message":"unknown severity","_meta":{"name":"gateway","logLevelName":"CUSTOM"}}
+{"message":
+null
+[]
